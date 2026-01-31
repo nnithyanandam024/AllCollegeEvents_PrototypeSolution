@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AllCollegeEvent - Hackathon Prototype</title>
+  <title>AllCollegeEvent - Complete Hackathon Prototype</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -58,6 +58,84 @@
     * {
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pointsPop {
+      0% { 
+        transform: scale(0) translateY(0); 
+        opacity: 0; 
+      }
+      50% { 
+        transform: scale(1.3) translateY(-30px); 
+        opacity: 1; 
+      }
+      100% { 
+        transform: translateY(-60px); 
+        opacity: 0; 
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-slideUp {
+      animation: slideUp 0.4s ease-out forwards;
+    }
+
+    .animate-pointsPop {
+      animation: pointsPop 2s ease-out forwards;
+    }
+
+    .animate-slideInRight {
+      animation: slideInRight 0.3s ease-out forwards;
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .animate-bounceIn {
+      animation: bounceIn 0.5s ease-out forwards;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -66,7 +144,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
     
-  
+    // ===== ICONS =====
     const Heart = ({ size = 24, fill = 'none', className = '' }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -137,6 +215,13 @@
         <polyline points="9 18 15 12 9 6"></polyline>
       </svg>
     );
+
+    const X = ({ size = 24, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    );
     
     const Trophy = ({ size = 24, className = '' }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -163,7 +248,20 @@
       </svg>
     );
 
- 
+    const Bookmark = ({ size = 24, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+      </svg>
+    );
+
+    const Award = ({ size = 24, className = '' }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="8" r="7"></circle>
+        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+      </svg>
+    );
+
+    // ===== HELPER FUNCTIONS =====
     const getPlaceholderImage = (gradient, title) => {
       return `data:image/svg+xml,${encodeURIComponent(`
         <svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
@@ -178,7 +276,7 @@
       `)}`;
     };
 
- 
+    // ===== SAMPLE DATA =====
     const SAMPLE_EVENTS = [
       {
         id: 1,
@@ -186,12 +284,15 @@
         category: "Hackathons",
         location: "Chennai",
         date: "Feb 15, 2026",
+        time: "9:00 AM - 6:00 PM",
         attendees: 342,
         rating: 4.8,
         verified: true,
         trending: true,
+        pointsReward: 50,
         gradient: '<stop offset="0%" style="stop-color:#667eea;stop-opacity:1" /><stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />',
-        organizer: "Tech Club IIT"
+        organizer: "Tech Club IIT",
+        description: "Build innovative AI solutions and compete for exciting prizes. Network with industry experts and showcase your skills."
       },
       {
         id: 2,
@@ -199,12 +300,15 @@
         category: "Job Fairs",
         location: "Bangalore",
         date: "Feb 20, 2026",
+        time: "10:00 AM - 5:00 PM",
         attendees: 1250,
         rating: 4.9,
         verified: true,
         trending: true,
+        pointsReward: 30,
         gradient: '<stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" /><stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />',
-        organizer: "Career Hub"
+        organizer: "Career Hub",
+        description: "Meet recruiters from top tech companies. Bring your resume and be ready for on-spot interviews."
       },
       {
         id: 3,
@@ -212,12 +316,15 @@
         category: "Webinars",
         location: "Online",
         date: "Feb 10, 2026",
+        time: "6:00 PM - 8:00 PM",
         attendees: 580,
         rating: 4.7,
         verified: true,
         trending: false,
+        pointsReward: 20,
         gradient: '<stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" /><stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />',
-        organizer: "Blockchain Academy"
+        organizer: "Blockchain Academy",
+        description: "Learn blockchain fundamentals and build your first dApp. Includes hands-on coding sessions."
       },
       {
         id: 4,
@@ -225,12 +332,15 @@
         category: "Conferences",
         location: "Coimbatore",
         date: "Feb 25, 2026",
+        time: "11:00 AM - 4:00 PM",
         attendees: 425,
         rating: 4.6,
         verified: true,
         trending: true,
+        pointsReward: 40,
         gradient: '<stop offset="0%" style="stop-color:#fa709a;stop-opacity:1" /><stop offset="100%" style="stop-color:#fee140;stop-opacity:1" />',
-        organizer: "Startup Incubator"
+        organizer: "Startup Incubator",
+        description: "Pitch your startup idea to VCs and angel investors. Win funding and mentorship opportunities."
       },
       {
         id: 5,
@@ -238,98 +348,213 @@
         category: "Workshops",
         location: "Delhi",
         date: "Mar 5, 2026",
+        time: "2:00 PM - 5:00 PM",
         attendees: 290,
         rating: 4.8,
         verified: true,
         trending: false,
+        pointsReward: 25,
         gradient: '<stop offset="0%" style="stop-color:#30cfd0;stop-opacity:1" /><stop offset="100%" style="stop-color:#330867;stop-opacity:1" />',
-        organizer: "Design Hub"
+        organizer: "Design Hub",
+        description: "Master design thinking methodology through interactive exercises and real-world case studies."
+      },
+      {
+        id: 6,
+        title: "Cloud Computing Masterclass",
+        category: "Webinars",
+        location: "Online",
+        date: "Feb 12, 2026",
+        time: "7:00 PM - 9:00 PM",
+        attendees: 720,
+        rating: 4.9,
+        verified: true,
+        trending: false,
+        pointsReward: 20,
+        gradient: '<stop offset="0%" style="stop-color:#a8edea;stop-opacity:1" /><stop offset="100%" style="stop-color:#fed6e3;stop-opacity:1" />',
+        organizer: "Cloud Experts Inc",
+        description: "Deep dive into AWS, Azure, and GCP. Learn cloud architecture and deployment strategies."
+      },
+      {
+        id: 7,
+        title: "Data Science Bootcamp",
+        category: "Workshops",
+        location: "Mumbai",
+        date: "Mar 8, 2026",
+        time: "9:00 AM - 6:00 PM",
+        attendees: 380,
+        rating: 4.7,
+        verified: true,
+        trending: true,
+        pointsReward: 45,
+        gradient: '<stop offset="0%" style="stop-color:#ff9a9e;stop-opacity:1" /><stop offset="100%" style="stop-color:#fecfef;stop-opacity:1" />',
+        organizer: "Data Science Academy",
+        description: "Full-day intensive bootcamp covering Python, pandas, ML algorithms, and real-world projects."
+      },
+      {
+        id: 8,
+        title: "Product Management Summit",
+        category: "Conferences",
+        location: "Pune",
+        date: "Mar 15, 2026",
+        time: "10:00 AM - 6:00 PM",
+        attendees: 550,
+        rating: 4.8,
+        verified: true,
+        trending: false,
+        pointsReward: 35,
+        gradient: '<stop offset="0%" style="stop-color:#ffecd2;stop-opacity:1" /><stop offset="100%" style="stop-color:#fcb69f;stop-opacity:1" />',
+        organizer: "PM Network India",
+        description: "Connect with top PMs from unicorns and learn product strategy, roadmapping, and metrics."
       }
     ];
 
+    // ===== MAIN COMPONENT =====
     const AllCollegeEventPrototype = () => {
       const [currentSolution, setCurrentSolution] = useState(0);
       const [showOnboarding, setShowOnboarding] = useState(false);
       const [userProfile, setUserProfile] = useState(null);
       const [savedEvents, setSavedEvents] = useState([]);
+      const [registeredEvents, setRegisteredEvents] = useState([]);
       const [selectedEvent, setSelectedEvent] = useState(null);
       const [showPostEvent, setShowPostEvent] = useState(false);
       const [userPoints, setUserPoints] = useState(0);
       const [badges, setBadges] = useState([]);
+      const [showNotification, setShowNotification] = useState(false);
+      const [notificationMessage, setNotificationMessage] = useState('');
+      const [notificationType, setNotificationType] = useState('success');
+      const [showPointsAnimation, setShowPointsAnimation] = useState(false);
+      const [pointsGained, setPointsGained] = useState(0);
+      const [showSavedEvents, setShowSavedEvents] = useState(false);
 
       const solutions = [
-        {
-          id: 0,
-          title: "Overview",
-          icon: Target,
-          color: "#667eea"
-        },
-        {
-          id: 1,
-          title: "Smart Onboarding → Personalized Feed",
-          subtitle: "30-second onboarding for instant personalization",
-          icon: Zap,
-          color: "#f093fb"
-        },
-        {
-          id: 2,
-          title: "Always-Visible Events",
-          subtitle: "Preloaded events that build instant trust",
-          icon: TrendingUp,
-          color: "#4facfe"
-        },
-        {
-          id: 3,
-          title: "Strong Event Cards",
-          subtitle: "Conversion-optimized card design",
-          icon: Star,
-          color: "#fa709a"
-        },
-        {
-          id: 4,
-          title: "Engagement Hooks",
-          subtitle: "Save, remind, and gamify the experience",
-          icon: Heart,
-          color: "#30cfd0"
-        },
-        {
-          id: 5,
-          title: "Post-Event Loop",
-          subtitle: "Keep users engaged after events end",
-          icon: Trophy,
-          color: "#fee140"
-        }
+        { id: 0, title: "Overview", icon: Target, color: "#667eea" },
+        { id: 1, title: "Smart Onboarding → Personalized Feed", subtitle: "30-second onboarding for instant personalization", icon: Zap, color: "#f093fb" },
+        { id: 2, title: "Always-Visible Events", subtitle: "Preloaded events that build instant trust", icon: TrendingUp, color: "#4facfe" },
+        { id: 3, title: "Strong Event Cards", subtitle: "Conversion-optimized card design", icon: Star, color: "#fa709a" },
+        { id: 4, title: "Engagement System", subtitle: "Points, badges, save & register", icon: Heart, color: "#30cfd0" },
+        { id: 5, title: "Post-Event Loop", subtitle: "Keep users engaged after events end", icon: Trophy, color: "#fee140" }
       ];
 
- 
+      // Calculate user level based on points
+      const getUserLevel = () => Math.floor(userPoints / 100) + 1;
+      const getPointsToNextLevel = () => (getUserLevel() * 100) - userPoints;
+      const getLevelProgress = () => ((userPoints % 100) / 100) * 100;
+
+      // Show notification helper
+      const showNotif = (message, type = 'success') => {
+        setNotificationMessage(message);
+        setNotificationType(type);
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000);
+      };
+
+      // Animate points helper
+      const animatePoints = (points) => {
+        setPointsGained(points);
+        setShowPointsAnimation(true);
+        setTimeout(() => setShowPointsAnimation(false), 2000);
+      };
+
+      // Check and unlock badges
+      const checkBadges = () => {
+        const newBadges = [...badges];
+        
+        if (!newBadges.includes('explorer') && savedEvents.length >= 5) {
+          newBadges.push('explorer');
+          showNotif('🏆 New badge unlocked: Event Explorer!', 'success');
+          setUserPoints(prev => prev + 100);
+        }
+        
+        if (!newBadges.includes('participant') && userPoints >= 100) {
+          newBadges.push('participant');
+          showNotif('🏆 New badge unlocked: Active Participant!', 'success');
+          setUserPoints(prev => prev + 50);
+        }
+        
+        if (!newBadges.includes('networker') && savedEvents.length >= 10) {
+          newBadges.push('networker');
+          showNotif('🏆 New badge unlocked: Top Networker!', 'success');
+          setUserPoints(prev => prev + 75);
+        }
+
+        if (!newBadges.includes('super') && userPoints >= 500) {
+          newBadges.push('super');
+          showNotif('🏆 New badge unlocked: Super User!', 'success');
+          setUserPoints(prev => prev + 200);
+        }
+        
+        setBadges(newBadges);
+      };
+
+      useEffect(() => {
+        checkBadges();
+      }, [savedEvents.length, userPoints]);
+
+      // ===== NOTIFICATION TOAST =====
+      const NotificationToast = () => {
+        if (!showNotification) return null;
+
+        return (
+          <div className="fixed top-20 right-4 z-50 animate-slideInRight">
+            <div className={`${
+              notificationType === 'success' ? 'bg-green-500' : 
+              notificationType === 'info' ? 'bg-blue-500' : 'bg-purple-500'
+            } text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[300px]`}>
+              <div className="text-xl">
+                {notificationType === 'success' ? '✓' : 'ℹ'}
+              </div>
+              <div className="flex-1 font-semibold">{notificationMessage}</div>
+            </div>
+          </div>
+        );
+      };
+
+      // ===== POINTS ANIMATION =====
+      const PointsAnimation = () => {
+        if (!showPointsAnimation) return null;
+
+        return (
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
+            <div className="animate-pointsPop text-6xl font-black text-purple-600">
+              +{pointsGained} ⚡
+            </div>
+          </div>
+        );
+      };
+
+      // ===== ONBOARDING FLOW =====
       const OnboardingFlow = () => {
         const [step, setStep] = useState(1);
         const [formData, setFormData] = useState({
           role: '',
           interests: [],
-          mode: ''
+          mode: '',
+          location: ''
         });
 
         const roles = ['Student', 'Faculty', 'Professional'];
-        const interests = ['Hackathons', 'Jobs', 'Workshops', 'Webinars', 'Conferences', 'Networking'];
+        const interests = ['Hackathons', 'Job Fairs', 'Workshops', 'Webinars', 'Conferences', 'Networking'];
         const modes = ['Online', 'Offline', 'Hybrid'];
+        const locations = ['Chennai', 'Bangalore', 'Delhi', 'Mumbai', 'Pune', 'Hyderabad'];
 
         const handleComplete = () => {
           setUserProfile(formData);
           setShowOnboarding(false);
           setUserPoints(50);
           setBadges(['newcomer']);
+          animatePoints(50);
+          showNotif('🎉 Welcome! You earned 50 points + Newcomer badge!', 'success');
         };
 
         return (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden animate-slideUp">
+            <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden animate-bounceIn">
               <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-8 text-white">
                 <h2 className="text-3xl font-bold mb-2">Welcome to AllCollegeEvent! 🎉</h2>
                 <p className="opacity-90">Let's personalize your experience in 30 seconds</p>
                 <div className="mt-4 flex gap-2">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className={`h-1 flex-1 rounded-full ${i <= step ? 'bg-white' : 'bg-white/30'}`} />
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-white' : 'bg-white/30'}`} />
                   ))}
                 </div>
               </div>
@@ -359,7 +584,7 @@
                 {step === 2 && (
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold text-gray-800">What interests you?</h3>
-                    <p className="text-sm text-gray-600">Select all that apply</p>
+                    <p className="text-sm text-gray-600">Select at least 2</p>
                     <div className="grid grid-cols-2 gap-3">
                       {interests.map(interest => (
                         <button
@@ -404,6 +629,27 @@
                   </div>
                 )}
 
+                {step === 4 && (
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800">Your location?</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {locations.map(location => (
+                        <button
+                          key={location}
+                          onClick={() => setFormData({...formData, location})}
+                          className={`p-3 rounded-xl border-2 transition-all ${
+                            formData.location === location 
+                              ? 'border-purple-600 bg-purple-50 shadow-md' 
+                              : 'border-gray-200 hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="font-semibold text-gray-800">{location}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-8 flex gap-3">
                   {step > 1 && (
                     <button 
@@ -415,17 +661,18 @@
                   )}
                   <button 
                     onClick={() => {
-                      if (step < 3) setStep(step + 1);
+                      if (step < 4) setStep(step + 1);
                       else handleComplete();
                     }}
                     disabled={
                       (step === 1 && !formData.role) ||
-                      (step === 2 && formData.interests.length === 0) ||
-                      (step === 3 && !formData.mode)
+                      (step === 2 && formData.interests.length < 2) ||
+                      (step === 3 && !formData.mode) ||
+                      (step === 4 && !formData.location)
                     }
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
                   >
-                    {step === 3 ? 'Get Started! 🚀' : 'Continue'}
+                    {step === 4 ? 'Get Started! 🚀' : 'Continue'}
                   </button>
                 </div>
               </div>
@@ -434,17 +681,33 @@
         );
       };
 
-  
+      // ===== EVENT CARD =====
       const EventCard = ({ event, enhanced = false }) => {
         const isSaved = savedEvents.includes(event.id);
+        const isRegistered = registeredEvents.includes(event.id);
         const eventImage = getPlaceholderImage(event.gradient, event.category);
 
-        const toggleSave = () => {
+        const toggleSave = (e) => {
+          e.stopPropagation();
           if (isSaved) {
             setSavedEvents(savedEvents.filter(id => id !== event.id));
+            showNotif('💔 Event removed from saved', 'info');
           } else {
             setSavedEvents([...savedEvents, event.id]);
             setUserPoints(userPoints + 10);
+            animatePoints(10);
+            showNotif('💾 Event saved! +10 points', 'success');
+          }
+        };
+
+        const handleRegister = (e) => {
+          e.stopPropagation();
+          if (!isRegistered) {
+            setRegisteredEvents([...registeredEvents, event.id]);
+            const points = event.pointsReward || 20;
+            setUserPoints(userPoints + points);
+            animatePoints(points);
+            showNotif(`🎉 Registered! +${points} points earned!`, 'success');
           }
         };
 
@@ -464,10 +727,7 @@
                 </div>
               )}
               <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleSave();
-                }}
+                onClick={toggleSave}
                 className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-all ${
                   isSaved ? 'bg-pink-500 text-white' : 'bg-white/90 text-gray-600 hover:bg-pink-100'
                 }`}
@@ -479,7 +739,7 @@
             <div className="p-5">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
+                  <h3 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-purple-600 transition-colors line-clamp-2">
                     {event.title}
                   </h3>
                   <span className="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
@@ -493,7 +753,12 @@
                   {event.verified && (
                     <div className="flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
                       <CheckCircle size={12} />
-                      Verified Organizer
+                      Verified
+                    </div>
+                  )}
+                  {event.pointsReward && (
+                    <div className="flex items-center gap-1 text-xs font-semibold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
+                      ⚡ {event.pointsReward} pts
                     </div>
                   )}
                 </div>
@@ -501,12 +766,12 @@
 
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin size={16} className="text-purple-500" />
-                  {event.location}
+                  <MapPin size={16} className="text-purple-500 flex-shrink-0" />
+                  <span className="truncate">{event.location}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar size={16} className="text-purple-500" />
-                  {event.date}
+                  <Calendar size={16} className="text-purple-500 flex-shrink-0" />
+                  <span className="truncate">{event.date}</span>
                 </div>
               </div>
 
@@ -515,7 +780,6 @@
                   <div className="flex items-center gap-1 text-sm text-gray-700">
                     <Users size={16} className="text-purple-500" />
                     <span className="font-semibold">{event.attendees}</span>
-                    <span className="text-gray-500">attending</span>
                   </div>
                   <div className="flex items-center gap-1 text-sm text-gray-700">
                     <Star size={16} className="text-yellow-500" fill="#eab308" />
@@ -524,22 +788,233 @@
                 </div>
               )}
 
-              <button className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 group">
-                Register Now
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <button 
+                onClick={handleRegister}
+                disabled={isRegistered}
+                className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 group ${
+                  isRegistered 
+                    ? 'bg-green-100 text-green-700 cursor-default' 
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg'
+                }`}
+              >
+                {isRegistered ? (
+                  <>
+                    <CheckCircle size={18} />
+                    Registered
+                  </>
+                ) : (
+                  <>
+                    Register Now
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </button>
             </div>
           </div>
         );
       };
 
- 
+      // ===== EVENT DETAIL MODAL =====
+      const EventDetailModal = () => {
+        if (!selectedEvent) return null;
+
+        const isSaved = savedEvents.includes(selectedEvent.id);
+        const isRegistered = registeredEvents.includes(selectedEvent.id);
+        const eventImage = getPlaceholderImage(selectedEvent.gradient, selectedEvent.category);
+
+        const toggleSave = () => {
+          if (isSaved) {
+            setSavedEvents(savedEvents.filter(id => id !== selectedEvent.id));
+            showNotif('💔 Event removed from saved', 'info');
+          } else {
+            setSavedEvents([...savedEvents, selectedEvent.id]);
+            setUserPoints(userPoints + 10);
+            animatePoints(10);
+            showNotif('💾 Event saved! +10 points', 'success');
+          }
+        };
+
+        const handleRegister = () => {
+          if (!isRegistered) {
+            setRegisteredEvents([...registeredEvents, selectedEvent.id]);
+            const points = selectedEvent.pointsReward || 20;
+            setUserPoints(userPoints + points);
+            animatePoints(points);
+            showNotif(`🎉 Registered! +${points} points earned!`, 'success');
+          }
+        };
+
+        return (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setSelectedEvent(null)}>
+            <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden animate-bounceIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div 
+                className="h-64 relative bg-cover bg-center" 
+                style={{ backgroundImage: `url(${eventImage})` }}
+              >
+                <button 
+                  onClick={() => setSelectedEvent(null)}
+                  className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-all"
+                >
+                  <X size={20} />
+                </button>
+                {selectedEvent.trending && (
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold text-purple-600 flex items-center gap-2">
+                    <TrendingUp size={18} />
+                    Trending
+                  </div>
+                )}
+              </div>
+
+              <div className="p-8">
+                <div className="mb-6">
+                  <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
+                    {selectedEvent.category}
+                  </span>
+                  <h2 className="text-3xl font-bold text-gray-900 mt-3 mb-2">{selectedEvent.title}</h2>
+                  <p className="text-gray-600">{selectedEvent.description}</p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                    <Calendar className="text-purple-500" />
+                    <div>
+                      <div className="text-sm text-gray-600">Date</div>
+                      <div className="font-semibold text-gray-900">{selectedEvent.date}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                    <MapPin className="text-purple-500" />
+                    <div>
+                      <div className="text-sm text-gray-600">Location</div>
+                      <div className="font-semibold text-gray-900">{selectedEvent.location}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6 mb-6 pb-6 border-b border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <Users className="text-purple-500" />
+                    <div>
+                      <div className="font-bold text-xl text-gray-900">{selectedEvent.attendees}</div>
+                      <div className="text-sm text-gray-600">Attending</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="text-yellow-500" fill="#eab308" />
+                    <div>
+                      <div className="font-bold text-xl text-gray-900">{selectedEvent.rating}</div>
+                      <div className="text-sm text-gray-600">Rating</div>
+                    </div>
+                  </div>
+                  {selectedEvent.verified && (
+                    <div className="flex items-center gap-2 text-green-600">
+                      <CheckCircle />
+                      <div className="text-sm font-semibold">Verified Organizer</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
+                  <div className="font-semibold text-gray-800 mb-1">Organized by</div>
+                  <div className="text-purple-600 font-bold">{selectedEvent.organizer}</div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button 
+                    onClick={toggleSave}
+                    className={`flex-1 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                      isSaved 
+                        ? 'bg-pink-100 text-pink-700' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
+                    {isSaved ? 'Saved' : 'Save Event'}
+                  </button>
+                  <button 
+                    onClick={handleRegister}
+                    disabled={isRegistered}
+                    className={`flex-1 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                      isRegistered 
+                        ? 'bg-green-100 text-green-700 cursor-default' 
+                        : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg'
+                    }`}
+                  >
+                    {isRegistered ? (
+                      <>
+                        <CheckCircle size={20} />
+                        Registered
+                      </>
+                    ) : (
+                      <>
+                        Register Now (+{selectedEvent.pointsReward} pts)
+                        <ArrowRight size={20} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // ===== ENGAGEMENT PANEL =====
       const EngagementPanel = () => {
         const achievements = [
-          { id: 'newcomer', name: 'Newcomer', icon: '🌟', unlocked: badges.includes('newcomer') },
-          { id: 'explorer', name: 'Event Explorer', icon: '🔍', unlocked: savedEvents.length >= 3 },
-          { id: 'networker', name: 'Top Networker', icon: '🤝', unlocked: userPoints >= 100 }
+          { 
+            id: 'newcomer', 
+            name: 'Newcomer', 
+            icon: '🌟', 
+            desc: 'Complete onboarding',
+            unlocked: badges.includes('newcomer'),
+            points: 50
+          },
+          { 
+            id: 'explorer', 
+            name: 'Event Explorer', 
+            icon: '🔍', 
+            desc: 'Save 5 events',
+            unlocked: badges.includes('explorer'),
+            points: 100,
+            progress: savedEvents.length,
+            required: 5
+          },
+          { 
+            id: 'participant', 
+            name: 'Active Participant', 
+            icon: '🚀', 
+            desc: 'Earn 100 points',
+            unlocked: badges.includes('participant'),
+            points: 50,
+            progress: userPoints,
+            required: 100
+          },
+          { 
+            id: 'networker', 
+            name: 'Top Networker', 
+            icon: '🤝', 
+            desc: 'Save 10 events',
+            unlocked: badges.includes('networker'),
+            points: 75,
+            progress: savedEvents.length,
+            required: 10
+          },
+          { 
+            id: 'super', 
+            name: 'Super User', 
+            icon: '👑', 
+            desc: 'Reach 500 points',
+            unlocked: badges.includes('super'),
+            points: 200,
+            progress: userPoints,
+            required: 500
+          }
         ];
+
+        const userLevel = getUserLevel();
+        const pointsToNext = getPointsToNextLevel();
+        const levelProgress = getLevelProgress();
 
         return (
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
@@ -548,48 +1023,139 @@
               Your Progress
             </h3>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-white rounded-xl p-4 text-center">
-                <div className="text-3xl font-bold text-purple-600">{userPoints}</div>
-                <div className="text-sm text-gray-600 mt-1">Points Earned</div>
+            {/* Level Progress */}
+            <div className="bg-white rounded-xl p-4 mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-bold text-gray-800">Level {userLevel}</div>
+                <div className="text-sm text-gray-600">{pointsToNext} pts to next level</div>
               </div>
-              <div className="bg-white rounded-xl p-4 text-center">
-                <div className="text-3xl font-bold text-pink-600">{savedEvents.length}</div>
-                <div className="text-sm text-gray-600 mt-1">Events Saved</div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-700 text-sm">Badges</h4>
-              {achievements.map(badge => (
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                 <div 
-                  key={badge.id}
-                  className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
-                    badge.unlocked 
-                      ? 'bg-white shadow-sm' 
-                      : 'bg-gray-100 opacity-60'
-                  }`}
-                >
-                  <div className="text-2xl">{badge.icon}</div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-sm text-gray-800">{badge.name}</div>
-                  </div>
-                  {badge.unlocked && (
-                    <CheckCircle size={20} className="text-green-500" />
-                  )}
-                </div>
-              ))}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 h-full transition-all duration-500"
+                  style={{ width: `${levelProgress}%` }}
+                />
+              </div>
             </div>
 
-            <button className="w-full mt-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
-              <Bell size={18} />
-              Set Event Reminders
-            </button>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              <div className="bg-white rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-purple-600">{userPoints}</div>
+                <div className="text-xs text-gray-600 mt-1">Points</div>
+              </div>
+              <div className="bg-white rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-pink-600">{savedEvents.length}</div>
+                <div className="text-xs text-gray-600 mt-1">Saved</div>
+              </div>
+              <div className="bg-white rounded-xl p-3 text-center">
+                <div className="text-2xl font-bold text-green-600">{registeredEvents.length}</div>
+                <div className="text-xs text-gray-600 mt-1">Registered</div>
+              </div>
+            </div>
+
+            {/* Badges */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-gray-700 text-sm flex items-center justify-between">
+                Badges
+                <span className="text-purple-600">{badges.length}/{achievements.length}</span>
+              </h4>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {achievements.map(badge => (
+                  <div 
+                    key={badge.id}
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                      badge.unlocked 
+                        ? 'bg-white shadow-sm' 
+                        : 'bg-gray-100 opacity-60'
+                    }`}
+                  >
+                    <div className="text-2xl">{badge.icon}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm text-gray-800">{badge.name}</div>
+                      <div className="text-xs text-gray-600">{badge.desc}</div>
+                      {!badge.unlocked && badge.progress !== undefined && (
+                        <div className="mt-1">
+                          <div className="text-xs text-purple-600 font-semibold">
+                            {badge.progress}/{badge.required}
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                            <div 
+                              className="bg-purple-600 h-full rounded-full transition-all"
+                              style={{ width: `${Math.min((badge.progress / badge.required) * 100, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {badge.unlocked && (
+                      <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2 mt-6">
+              <button 
+                onClick={() => setShowSavedEvents(true)}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <Bookmark size={18} />
+                View Saved Events ({savedEvents.length})
+              </button>
+              <button className="w-full py-3 bg-white border-2 border-purple-200 text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition-all flex items-center justify-center gap-2">
+                <Bell size={18} />
+                Set Event Reminders
+              </button>
+            </div>
           </div>
         );
       };
 
-    
+      // ===== SAVED EVENTS MODAL =====
+      const SavedEventsModal = () => {
+        if (!showSavedEvents) return null;
+
+        const savedEventsList = SAMPLE_EVENTS.filter(e => savedEvents.includes(e.id));
+
+        return (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowSavedEvents(false)}>
+            <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl overflow-hidden animate-bounceIn max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 text-white flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Saved Events</h2>
+                  <p className="text-sm opacity-90">{savedEventsList.length} events saved</p>
+                </div>
+                <button 
+                  onClick={() => setShowSavedEvents(false)}
+                  className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-all"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="p-6 overflow-y-auto flex-1">
+                {savedEventsList.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">📌</div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">No saved events yet</h3>
+                    <p className="text-gray-600">Start saving events you're interested in!</p>
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {savedEventsList.map(event => (
+                      <EventCard key={event.id} event={event} enhanced={true} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // ===== POST EVENT MODAL =====
       const PostEventModal = () => {
         const [rating, setRating] = useState(0);
         const [submitted, setSubmitted] = useState(false);
@@ -597,16 +1163,18 @@
         const handleSubmit = () => {
           setSubmitted(true);
           setUserPoints(userPoints + 25);
+          animatePoints(25);
           setTimeout(() => {
             setShowPostEvent(false);
             setSubmitted(false);
+            showNotif('⭐ Thank you for your feedback! +25 points', 'success');
           }, 2000);
         };
 
         if (submitted) {
           return (
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-3xl max-w-md w-full p-8 text-center animate-slideUp">
+              <div className="bg-white rounded-3xl max-w-md w-full p-8 text-center animate-bounceIn">
                 <div className="text-6xl mb-4">🎉</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">Thank you!</h3>
                 <p className="text-gray-600 mb-4">You earned 25 points!</p>
@@ -621,7 +1189,7 @@
 
         return (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden animate-slideUp">
+            <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden animate-bounceIn">
               <div className="bg-gradient-to-r from-yellow-400 to-orange-500 p-8 text-white">
                 <h2 className="text-3xl font-bold mb-2">How was the event? ⭐</h2>
                 <p className="opacity-90">Help us improve future events</p>
@@ -648,18 +1216,21 @@
                 </div>
 
                 <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
-                  <h4 className="font-semibold text-gray-800 mb-3">Similar Upcoming Events</h4>
+                  <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <TrendingUp size={18} className="text-purple-600" />
+                    Similar Upcoming Events
+                  </h4>
                   <div className="space-y-2">
                     {SAMPLE_EVENTS.slice(0, 2).map(event => {
                       const eventImg = getPlaceholderImage(event.gradient, event.category);
                       return (
                         <div key={event.id} className="flex items-center gap-3 p-2 bg-white rounded-lg hover:shadow-sm transition-shadow cursor-pointer">
-                          <div className="w-12 h-12 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${eventImg})` }} />
+                          <div className="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style={{ backgroundImage: `url(${eventImg})` }} />
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-semibold text-gray-800 truncate">{event.title}</div>
                             <div className="text-xs text-gray-500">{event.date}</div>
                           </div>
-                          <ChevronRight size={16} className="text-gray-400" />
+                          <ChevronRight size={16} className="text-gray-400 flex-shrink-0" />
                         </div>
                       );
                     })}
@@ -669,9 +1240,10 @@
                 <button 
                   onClick={handleSubmit}
                   disabled={rating === 0}
-                  className="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
+                  className="w-full py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all flex items-center justify-center gap-2"
                 >
-                  Submit & Get Certificate 🏆
+                  Submit & Get Certificate
+                  <Award size={18} />
                 </button>
               </div>
             </div>
@@ -679,7 +1251,7 @@
         );
       };
 
-    
+      // ===== OVERVIEW SCREEN =====
       const OverviewScreen = () => {
         return (
           <div className="space-y-8">
@@ -702,12 +1274,12 @@
                 >
                   <div className="flex items-start gap-4 mb-4">
                     <div 
-                      className="p-3 rounded-xl text-white"
+                      className="p-3 rounded-xl text-white flex-shrink-0"
                       style={{ background: solution.color }}
                     >
                       <solution.icon size={24} />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
                         {solution.title}
                       </h3>
@@ -746,7 +1318,7 @@
         );
       };
 
-   
+      // ===== RENDER SOLUTION CONTENT =====
       const renderSolutionContent = () => {
         switch(currentSolution) {
           case 1:
@@ -760,17 +1332,18 @@
                   <div className="grid md:grid-cols-2 gap-6 mb-6">
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                       <h4 className="font-bold text-red-800 mb-2">❌ Before</h4>
-                      <p className="text-sm text-gray-700">Generic homepage → High bounce rate</p>
+                      <p className="text-sm text-gray-700">Generic homepage → High bounce rate → No personalization</p>
                     </div>
                     <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                       <h4 className="font-bold text-green-800 mb-2">✅ After</h4>
-                      <p className="text-sm text-gray-700">Personalized feed → Increased engagement</p>
+                      <p className="text-sm text-gray-700">Personalized feed → Increased engagement → 50 welcome points</p>
                     </div>
                   </div>
                   <button 
                     onClick={() => setShowOnboarding(true)}
-                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center gap-2"
                   >
+                    <Zap size={20} />
                     Try Onboarding Demo
                   </button>
                 </div>
@@ -783,13 +1356,15 @@
                         <p className="text-sm text-gray-600">Profile: <span className="font-semibold text-gray-800">{userProfile.role}</span></p>
                         <p className="text-sm text-gray-600">Interests: <span className="font-semibold text-gray-800">{userProfile.interests.join(', ')}</span></p>
                         <p className="text-sm text-gray-600">Mode: <span className="font-semibold text-gray-800">{userProfile.mode}</span></p>
+                        <p className="text-sm text-gray-600">Location: <span className="font-semibold text-gray-800">{userProfile.location}</span></p>
                       </div>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {SAMPLE_EVENTS.filter(e => 
                         userProfile.interests.some(interest => e.category.includes(interest)) ||
-                        (userProfile.mode === 'Online' && e.location === 'Online')
-                      ).slice(0, 4).map(event => (
+                        (userProfile.mode === 'Online' && e.location === 'Online') ||
+                        e.location === userProfile.location
+                      ).slice(0, 6).map(event => (
                         <EventCard key={event.id} event={event} enhanced={true} />
                       ))}
                     </div>
@@ -814,22 +1389,42 @@
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Trending Events</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <TrendingUp className="text-purple-600" />
+                    Trending Events
+                  </h3>
                   <div className="grid md:grid-cols-3 gap-6">
                     {SAMPLE_EVENTS.filter(e => e.trending).map(event => (
-                      <EventCard key={event.id} event={event} />
+                      <EventCard key={event.id} event={event} enhanced={true} />
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Upcoming Virtual Events</h3>
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <Calendar className="text-purple-600" />
+                    Upcoming Virtual Events
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {SAMPLE_EVENTS.filter(e => e.location === 'Online').map(event => (
-                      <EventCard key={event.id} event={event} />
+                      <EventCard key={event.id} event={event} enhanced={true} />
                     ))}
                   </div>
                 </div>
+
+                {userProfile && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                      <MapPin className="text-purple-600" />
+                      Events Near You ({userProfile.location})
+                    </h3>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {SAMPLE_EVENTS.filter(e => e.location === userProfile.location).map(event => (
+                        <EventCard key={event.id} event={event} enhanced={true} />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
 
@@ -858,12 +1453,15 @@
                       <li>✓ Attendee Count (Social Proof)</li>
                       <li>✓ Rating & Reviews</li>
                       <li>✓ Trending Indicator</li>
+                      <li>✓ Points Reward Display</li>
+                      <li>✓ One-Click Save Functionality</li>
+                      <li>✓ Registration Status Tracking</li>
                     </ul>
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">
-                  {SAMPLE_EVENTS.slice(0, 3).map(event => (
+                  {SAMPLE_EVENTS.slice(0, 6).map(event => (
                     <EventCard key={event.id} event={event} enhanced={true} />
                   ))}
                 </div>
@@ -874,14 +1472,36 @@
             return (
               <div className="space-y-6">
                 <div className="bg-white rounded-2xl p-8 shadow-lg">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Solution 4: Engagement Hooks</h2>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Solution 4: Engagement System</h2>
                   <p className="text-gray-600 mb-6">
-                    Save events, earn points, unlock badges - turn one-time visitors into repeat users
+                    Save events, earn points, unlock badges, level up - turn one-time visitors into repeat users
                   </p>
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
                     <p className="text-sm font-semibold text-purple-900">
                       🎯 Goal: Users return even if they don't register immediately
                     </p>
+                  </div>
+                  <div className="grid md:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-4 text-center">
+                      <div className="text-3xl mb-2">⚡</div>
+                      <div className="font-bold text-gray-800">Points System</div>
+                      <div className="text-sm text-gray-600 mt-1">Earn on every action</div>
+                    </div>
+                    <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl p-4 text-center">
+                      <div className="text-3xl mb-2">🏆</div>
+                      <div className="font-bold text-gray-800">Badge System</div>
+                      <div className="text-sm text-gray-600 mt-1">Unlock achievements</div>
+                    </div>
+                    <div className="bg-gradient-to-br from-green-100 to-teal-100 rounded-xl p-4 text-center">
+                      <div className="text-3xl mb-2">📊</div>
+                      <div className="font-bold text-gray-800">Level System</div>
+                      <div className="text-sm text-gray-600 mt-1">Progress & compete</div>
+                    </div>
+                    <div className="bg-gradient-to-br from-pink-100 to-rose-100 rounded-xl p-4 text-center">
+                      <div className="text-3xl mb-2">💾</div>
+                      <div className="font-bold text-gray-800">Save Events</div>
+                      <div className="text-sm text-gray-600 mt-1">Build your list</div>
+                    </div>
                   </div>
                 </div>
 
@@ -911,33 +1531,67 @@
                   </p>
                   <div className="grid md:grid-cols-3 gap-4 mb-6">
                     <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                      <h4 className="font-bold text-green-800 mb-2">1-Click Feedback</h4>
-                      <p className="text-sm text-gray-700">Simple rating system</p>
+                      <h4 className="font-bold text-green-800 mb-2 flex items-center gap-2">
+                        <Star size={18} />
+                        1-Click Feedback
+                      </h4>
+                      <p className="text-sm text-gray-700">Simple 5-star rating + 25 points reward</p>
                     </div>
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <h4 className="font-bold text-blue-800 mb-2">Instant Certificate</h4>
-                      <p className="text-sm text-gray-700">Automatic delivery</p>
+                      <h4 className="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                        <Award size={18} />
+                        Instant Certificate
+                      </h4>
+                      <p className="text-sm text-gray-700">Automatic email delivery to registered users</p>
                     </div>
                     <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                      <h4 className="font-bold text-purple-800 mb-2">Similar Events</h4>
+                      <h4 className="font-bold text-purple-800 mb-2 flex items-center gap-2">
+                        <TrendingUp size={18} />
+                        Similar Events
+                      </h4>
                       <p className="text-sm text-gray-700">Personalized recommendations</p>
                     </div>
                   </div>
                   <button 
                     onClick={() => setShowPostEvent(true)}
-                    className="px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                    className="px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all flex items-center gap-2"
                   >
+                    <Trophy size={20} />
                     Try Post-Event Flow Demo
                   </button>
                 </div>
 
                 <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl p-8 border border-yellow-200">
                   <h3 className="text-2xl font-bold text-gray-800 mb-4">Why This Matters</h3>
-                  <div className="space-y-3 text-gray-700">
-                    <p>✓ Events don't end when they're over</p>
-                    <p>✓ Users stay connected to the platform</p>
-                    <p>✓ Builds trust through certificates and recognition</p>
-                    <p>✓ Creates natural discovery loop for future events</p>
+                  <div className="grid md:grid-cols-2 gap-4 text-gray-700">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="text-green-600 flex-shrink-0 mt-1" size={20} />
+                      <div>
+                        <div className="font-semibold mb-1">Continuous Engagement</div>
+                        <div className="text-sm">Events don't end when they're over</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="text-green-600 flex-shrink-0 mt-1" size={20} />
+                      <div>
+                        <div className="font-semibold mb-1">Platform Loyalty</div>
+                        <div className="text-sm">Users stay connected to the platform</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="text-green-600 flex-shrink-0 mt-1" size={20} />
+                      <div>
+                        <div className="font-semibold mb-1">Trust Building</div>
+                        <div className="text-sm">Certificates and recognition build credibility</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="text-green-600 flex-shrink-0 mt-1" size={20} />
+                      <div>
+                        <div className="font-semibold mb-1">Discovery Loop</div>
+                        <div className="text-sm">Natural path to discover future events</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -948,9 +1602,10 @@
         }
       };
 
+      // ===== MAIN RENDER =====
       return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
-        
+          {/* Header */}
           <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 py-4">
               <div className="flex items-center justify-between">
@@ -960,14 +1615,16 @@
                   </div>
                   <div>
                     <h1 className="text-xl font-bold text-gray-900">AllCollegeEvent</h1>
-                    <p className="text-xs text-gray-500">Hackathon Prototype</p>
+                    <p className="text-xs text-gray-500">Complete Prototype</p>
                   </div>
                 </div>
                 
                 {userProfile && (
                   <div className="flex items-center gap-4">
-                    <div className="bg-purple-50 px-4 py-2 rounded-full">
-                      <span className="text-sm font-semibold text-purple-600">⚡ {userPoints} points</span>
+                    <div className="bg-purple-50 px-4 py-2 rounded-full border border-purple-200">
+                      <span className="text-sm font-semibold text-purple-600">Level {getUserLevel()}</span>
+                      <span className="mx-2 text-gray-400">•</span>
+                      <span className="text-sm font-semibold text-purple-600">⚡ {userPoints} pts</span>
                     </div>
                   </div>
                 )}
@@ -975,7 +1632,7 @@
             </div>
           </header>
 
-      
+          {/* Navigation */}
           <div className="bg-white border-b border-gray-200 sticky top-[73px] z-30">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex gap-2 overflow-x-auto py-3 scrollbar-hide">
@@ -997,55 +1654,36 @@
             </div>
           </div>
 
-     
+          {/* Main Content */}
           <main className="max-w-7xl mx-auto px-4 py-8">
             {renderSolutionContent()}
           </main>
 
-     
+          {/* Modals & Overlays */}
           {showOnboarding && <OnboardingFlow />}
           {showPostEvent && <PostEventModal />}
+          {selectedEvent && <EventDetailModal />}
+          {showSavedEvents && <SavedEventsModal />}
+          
+          {/* Notifications */}
+          <NotificationToast />
+          <PointsAnimation />
 
-        
-          {currentSolution === 0 && (
+          {/* Floating Action Button */}
+          {currentSolution === 0 && !userProfile && (
             <button
               onClick={() => setShowOnboarding(true)}
               className="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-2xl hover:scale-110 transition-transform z-50"
+              title="Start Onboarding"
             >
               <Zap size={24} />
             </button>
           )}
-
-          <style jsx>{`
-            @keyframes slideUp {
-              from {
-                opacity: 0;
-                transform: translateY(20px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-
-            .animate-slideUp {
-              animation: slideUp 0.4s ease-out forwards;
-            }
-
-            .scrollbar-hide {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-
-            .scrollbar-hide::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
         </div>
       );
     };
 
-   
+    // Render the app
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<AllCollegeEventPrototype />);
   </script>
